@@ -2,6 +2,14 @@ import os
 import pdfplumber
 import re
 import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import Fatura, Base
+
+DATABASE_URL = 'postgresql://postgres:12345678@localhost:5432/postgres'
+engine = create_engine(DATABASE_URL)
+Session = sessionmaker(bind=engine)
+session = Session()
 
 def extrair_dados_pdf(pdf_path):
     with pdfplumber.open(pdf_path) as pdf:
@@ -26,7 +34,7 @@ def extrair_dados_pdf(pdf_path):
             except ValueError:
                 return 0
         return 0
-    
+
     def converter_valor_int(valor):
         if valor:
             valor = valor.replace('.', '')
@@ -48,22 +56,27 @@ def extrair_dados_pdf(pdf_path):
         "contrib_ilum_publica_valor": converter_valor_float(contrib_ilum_publica_valor.group(1)) if contrib_ilum_publica_valor else 0
     }
 
-    return dados_extraidos
+    nova_fatura = Fatura(
+        cliente_id=dados_extraidos['cliente_id'],
+        referente_a=dados_extraidos['referente_a'],
+        energia_eletrica_kwh=dados_extraidos['energia_eletrica_kwh'],
+        energia_eletrica_valor=dados_extraidos['energia_eletrica_valor'],
+        energia_sceee_kwh=dados_extraidos['energia_sceee_kwh'],
+        energia_sceee_valor=dados_extraidos['energia_sceee_valor'],
+        energia_compensada_kwh=dados_extraidos['energia_compensada_kwh'],
+        energia_compensada_valor=dados_extraidos['energia_compensada_valor'],
+        contrib_ilum_publica_valor=dados_extraidos['contrib_ilum_publica_valor']
+    )
+    session.add(nova_fatura)
+    session.commit()
 
 def processar_pasta(pasta_path):
-    resultados = []
-    
     for filename in os.listdir(pasta_path):
         if filename.endswith(".pdf"):
             file_path = os.path.join(pasta_path, filename)
-            dados = extrair_dados_pdf(file_path)
-            resultados.append(dados)
+            extrair_dados_pdf(file_path)
 
-    return resultados
+pasta_path = "faturas"
+processar_pasta(pasta_path)
 
-pasta_path = "Faturas"
-resultados = processar_pasta(pasta_path)
-
-resultados_json = json.dumps(resultados, indent=4, ensure_ascii=False)
-
-print(resultados_json)
+print("Dados inseridos no banco de dados com sucesso!")
