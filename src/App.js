@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart, registerables } from 'chart.js';
+import DownloadFaturas from './components/DownloadFaturas';
 import './App.css';
 
-
-Chart.register(...registerables); 
+Chart.register(...registerables);
 
 function App() {
     const [faturas, setFaturas] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [clienteId, setClienteId] = useState('');
     const [inputClienteId, setInputClienteId] = useState('');
+    const navigate = useNavigate();
 
     const fetchFaturas = async () => {
         try {
@@ -43,6 +45,14 @@ function App() {
         e.preventDefault();
         fetchFaturasPorCliente(inputClienteId || clienteId);
         setClienteId(inputClienteId);
+    };
+
+    const handleDownloadFaturasClick = () => {
+        navigate('/download-faturas');
+    };
+
+    const handleHome = () => {
+        navigate('/');
     };
 
     const chartDataEnergia = {
@@ -79,43 +89,61 @@ function App() {
 
     return (
         <div className="dashboard-container">
-    <h1>Dashboard de Faturas</h1>
-    <div className="search-container">
-        <form onSubmit={handleSubmit} className="form-client-search">
-            <label htmlFor="cliente-id" className="label-client">Selecione ou digite o Cliente ID:</label>
-            <select
-                id="cliente-id"
-                value={clienteId}
-                onChange={(e) => setClienteId(e.target.value)}
-                className="select-client"
-            >
-                <option value="">Selecione um cliente</option>
-                {clientes.map(cliente => (
-                    <option key={cliente} value={cliente}>
-                        Cliente ID: {cliente}
-                    </option>
-                ))}
-            </select>
+            <div className="navigation"> 
+                <button onClick={handleHome}>Home</button> {}
+                <button onClick={handleDownloadFaturasClick}>Download de Faturas</button> {}
+            </div>
 
-            <button type="submit" className="btn-submit">Buscar Faturas</button>
-        </form>
-    </div>
+            <Routes>
+                <Route path="/" element={
+                    <>
+                        <h1>Dashboard de Faturas</h1>
+                        <div className="search-container">
+                            <form onSubmit={handleSubmit} className="form-client-search">
+                                <label htmlFor="cliente-id" className="label-client">Selecione ou digite o Cliente ID:</label>
+                                <select
+                                    id="cliente-id"
+                                    value={clienteId}
+                                    onChange={(e) => setClienteId(e.target.value)}
+                                    className="select-client"
+                                >
+                                    <option value="">Selecione um cliente</option>
+                                    {clientes.map(cliente => (
+                                        <option key={cliente} value={cliente}>
+                                            Cliente ID: {cliente}
+                                        </option>
+                                    ))}
+                                </select>
 
-    {faturas.length > 0 ? (
-        <div>
-            <h2>Gráficos de Energia (kWh)</h2>
-            <Bar data={chartDataEnergia} />
+                                <button type="submit" className="btn-submit">Buscar Faturas</button>
+                            </form>
+                        </div>
 
-            <h2>Gráficos de Valores (R$)</h2>
-            <Bar data={chartDataValores} />
+                        {faturas.length > 0 ? (
+                            <div>
+                                <h2>Gráficos de Energia (kWh)</h2>
+                                <Bar data={chartDataEnergia} />
+
+                                <h2>Gráficos de Valores (R$)</h2>
+                                <Bar data={chartDataValores} />
+                            </div>
+                        ) : clienteId || inputClienteId ? (
+                            <p>Nenhuma fatura encontrada para o cliente {clienteId || inputClienteId}.</p>
+                        ) : (
+                            <p>Insira ou selecione o ID do cliente para buscar os dados.</p>
+                        )}
+                    </>
+                } />
+                <Route path="/download-faturas" element={<DownloadFaturas />} />
+            </Routes>
         </div>
-    ) : clienteId || inputClienteId ? (
-        <p>Nenhuma fatura encontrada para o cliente {clienteId || inputClienteId}.</p>
-    ) : (
-        <p>Insira ou selecione o ID do cliente para buscar os dados.</p>
-    )}
-</div>
     );
 }
 
-export default App;
+const AppWithRouter = () => (
+    <Router>
+        <App />
+    </Router>
+);
+
+export default AppWithRouter;

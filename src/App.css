@@ -81,3 +81,65 @@ h2 {
 .chart-container {
   margin-top: 20px;
 }
+
+.app-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.home-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.btn-go-to-download {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.download-faturas-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.form-container {
+  margin-bottom: 20px;
+}
+
+.form-container label {
+  margin-right: 10px;
+}
+
+.form-container select, .form-container input {
+  margin-bottom: 15px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn-search, .btn-download {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.fatura-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pdf-icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
