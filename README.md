@@ -1,5 +1,3 @@
-Aqui está um exemplo de um arquivo `README.md` para o seu projeto:
-
 ```markdown
 # Leitor de Faturas - Dashboard
 
