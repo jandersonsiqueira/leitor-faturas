@@ -1,4 +1,3 @@
-```markdown
 # Leitor de Faturas - Dashboard
 
 Este projeto é um dashboard desenvolvido em React, que exibe informações de consumo de energia e valores de faturas para diferentes clientes. Os dados são visualizados por meio de gráficos de barra, utilizando `react-chartjs-2` e `chart.js`.
@@ -30,7 +29,6 @@ Este projeto é um dashboard desenvolvido em React, que exibe informações de c
 ```bash
 git clone https://github.com/seu-usuario/leitor-faturas.git
 cd leitor-faturas
-```
 
 2. Instale as dependências:
 
